@@ -12,3 +12,8 @@ class ReviewRequest(BaseModel):
 @app.post("/predict")
 def predict(review: ReviewRequest):
     return predict_topic(review.text)
+
+
+@app.get("/health")
+def health():
+    return {"status": "ok"}

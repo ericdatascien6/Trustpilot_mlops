@@ -1,29 +1,57 @@
-# Trustpilot_mlops
+# Trustpilot MLOps – API de Topic Modeling
 
-## 🧭 Contexte & Objectifs
+Ce projet implémente un microservice de **Topic Modeling** basé sur :
 
-### Objectif du projet
-Ce projet s’inscrit dans un cas d’usage réaliste : **Trustpilot** souhaite fournir à ses entreprises clientes un module d’analyse automatique des avis, capable de :
+- Sentence-BERT pour la génération d’embeddings
+- KMeans (scikit-learn) pour le clustering
+- FastAPI pour l’exposition du modèle en API
 
-- classifier le **sentiment** (positif / négatif)
-- extraire automatiquement les **grandes thématiques** présentes dans les retours clients
-- synthétiser les insights dans un **tableau de bord métier**
-
----
-
-## 📊 Données utilisées
-
-Les avis Trustpilot n’étant pas disponibles publiquement à grande échelle, ce projet repose sur un **dataset proxy robuste** :
-
-### Amazon Reviews Polarity (Kaggle)
-- **3,6 M** avis pour l’entraînement  
-- **0,4 M** avis pour le test  
-- **2 classes équilibrées** (positif / négatif)  
-- Données textuelles riches : livres, films, musique, jeux vidéo…  
-
-👉 Ce dataset est particulièrement adapté pour simuler un **usage Trustpilot haute volumétrie**.
+L’objectif est de fournir un service d’inférence léger, reproductible et compatible CPU dans le cadre d’un projet MLOps.
 
 ---
 
-## 🧪 Travail réalisé dans ce dépôt
+# 1. Cloner le dépôt
+git clone https://github.com/ericdatascien6/Trustpilot_mlops.git
+cd Trustpilot_mlops
 
+
+# 2. Tester l'API d’inférence
+cd services/api_inference
+./start_inference.sh
+source .venv/bin/activate
+uvicorn main:app --host 127.0.0.1 --port 8000
+
+L’API tourne alors sur la VM à l’adresse : http://127.0.0.1:8000
+(laisser le serveur uvicorn exécuté sur cette console)
+
+
+## Tester l’API depuis une machine locale (Tunnel SSH)
+
+Si l’API tourne sur une VM distante, créer un tunnel SSH :
+```bash
+ssh -i "data_enginering_machine.pem" -L 9000:127.0.0.1:8000 ubuntu@IP_VM
+
+Puis ouvrir l'interface UI de FastAPI dans le navigateur :   http://localhost:9000/docs
+
+viter le port 8080 (souvent déjà utilisé par Docker ou autres services locaux).
+
+
+
+
+# Structure simplifiée du projet
+
+Trustpilot_mlops/
+│ 
+├── models/ 
+│   ├── kmeans_topics.pkl 
+│   ├── cluster_labels.pkl 
+│ 
+├── services/ 
+│   ├── api_inference/ 
+|       ├── main.py 
+|       ├── inference.py
+│       ├── schemas.py
+│       ├── requirements_inference.txt
+|       ├── Dockerfile
+│
+└── README.md
