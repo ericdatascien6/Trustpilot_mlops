@@ -1,11 +1,11 @@
+import os
 import joblib
 import numpy as np
 import re
 from sentence_transformers import SentenceTransformer
 from pathlib import Path
 
-BASE_DIR = Path(__file__).resolve().parents[2]
-MODELS_DIR = BASE_DIR / "models"
+MODELS_DIR = Path(os.getenv("MODEL_DIR", "/models"))
 
 kmeans = joblib.load(MODELS_DIR / "kmeans_topics.pkl")
 cluster_labels = joblib.load(MODELS_DIR / "cluster_labels.pkl")

@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-from services.api_inference.inference import predict_topic
+from inference import predict_topic
 
 app = FastAPI(title="Trustpilot Topic API")
 

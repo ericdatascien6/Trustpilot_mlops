@@ -1,0 +1,68 @@
+services:
+  # =========================
+  # 1) API INFERENCE (online)
+  # =========================
+  api_inference:
+    build:
+      context: ./services/api_inference
+      dockerfile: Dockerfile
+    container_name: trustpilot_api_inference
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./models:/models
+    environment:
+      - MODEL_DIR=/models
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+  # =========================
+  # 2) MLFLOW (tracking)
+  # =========================
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:v2.16.2
+    container_name: trustpilot_mlflow
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./mlruns:/mlruns
+    command: >
+      mlflow server
+      --host 0.0.0.0
+      --port 5000
+      --backend-store-uri file:/mlruns
+      --default-artifact-root file:/mlruns
+    healthcheck:
+      test: ["CMD", "sh", "-c", "curl -f http://localhost:5000/ || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  # =========================
+  # 3) TRAINER (batch job)
+  # =========================
+  trainer:
+    build:
+      context: ./services/trainer
+      dockerfile: Dockerfile
+    container_name: trustpilot_trainer
+    depends_on:
+      mlflow:
+        condition: service_healthy
+    volumes:
+      - ./data:/data
+      - ./models:/models
+    environment:
+      - DATA_PATH=/data/raw/train.csv
+      - MODEL_DIR=/models
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
+      - MLFLOW_EXPERIMENT_NAME=trustpilot-topic-modeling
+      - K=6
+      - SAMPLE_SIZE=20000
+      - RANDOM_STATE=42
+    restart: "no"

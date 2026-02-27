@@ -14,3 +14,12 @@ __pycache__/
 .idea/
 .vscode/
 *.swp
+
+# ML artifacts
+models/ mlruns/
+
+# Raw data
+data/raw/
+
+# Mac
+.DS_Store
