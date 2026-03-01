@@ -16,7 +16,8 @@ __pycache__/
 *.swp
 
 # ML artifacts
-models/ mlruns/
+models/
+mlruns/
 
 # Raw data
 data/raw/

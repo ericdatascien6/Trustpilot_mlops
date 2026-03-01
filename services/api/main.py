@@ -1,17 +1,36 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
+
 from inference import predict_topic
+from training import train_model
+
 
 app = FastAPI(title="Trustpilot Topic API")
 
+
+# ==============================
+# Schéma requête inference
+# ==============================
 
 class ReviewRequest(BaseModel):
     text: str
 
 
+# ==============================
+# Routes API
+# ==============================
+
 @app.post("/predict")
 def predict(review: ReviewRequest):
     return predict_topic(review.text)
+
+
+@app.post("/train")
+def train():
+    """
+    Lance un entraînement complet du modèle
+    """
+    return train_model()
 
 
 @app.get("/health")
