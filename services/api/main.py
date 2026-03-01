@@ -25,14 +25,6 @@ def predict(review: ReviewRequest):
     return predict_topic(review.text)
 
 
-@app.post("/train")
-def train():
-    """
-    Lance un entraînement complet du modèle
-    """
-    return train_model()
-
-
 @app.get("/health")
 def health():
     return {"status": "ok"}

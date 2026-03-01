@@ -1,45 +1,52 @@
+version: "3.9"
+
 services:
-  # =========================
-  # 1) API
-  # =========================
+
   api:
     build:
       context: ./services/api
-      dockerfile: Dockerfile
     container_name: trustpilot_api
     ports:
       - "8000:8000"
+    depends_on:
+      - mlflow
+    environment:
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
     volumes:
       - ./models:/models
       - ./data:/data
-    environment:
-      - MODEL_DIR=/models
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
-      interval: 10s
-      timeout: 3s
-      retries: 10
-    restart: unless-stopped
+      - ./mlruns:/mlruns
 
-  # =========================
-  # 2) MLFLOW (tracking)
-  # =========================
   mlflow:
-    image: ghcr.io/mlflow/mlflow:v2.16.2
+    image: ghcr.io/mlflow/mlflow:v2.15.1
     container_name: trustpilot_mlflow
     ports:
       - "5000:5000"
-    volumes:
-      - ./mlruns:/mlruns
     command: >
       mlflow server
       --host 0.0.0.0
       --port 5000
-      --backend-store-uri file:/mlruns
-      --default-artifact-root file:/mlruns
-    healthcheck:
-      test: ["CMD", "sh", "-c", "curl -f http://localhost:5000/ || exit 1"]
-      interval: 10s
-      timeout: 3s
-      retries: 20
-    restart: unless-stopped
+      --backend-store-uri /mlruns
+      --default-artifact-root /mlruns
+    volumes:
+      - ./mlruns:/mlruns
+
+  trainer:
+    build:
+      context: ./services/trainer
+    container_name: trustpilot_trainer
+    depends_on:
+      - mlflow
+    environment:
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
+      - MLFLOW_EXPERIMENT_NAME=trustpilot_topic_modeling
+      - DATA_PATH=/data/raw/train.csv
+      - MODELS_DIR=/models
+      - EMBEDDING_MODEL=sentence-transformers/all-MiniLM-L6-v2
+      - K=6
+      - RANDOM_STATE=42
+      - SAMPLE_SIZE=20000
+    volumes:
+      - ./models:/models
+      - ./data:/data
+      - ./mlruns:/mlruns
