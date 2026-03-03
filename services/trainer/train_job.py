@@ -1,9 +1,12 @@
 import os
 import re
+import time
 import joblib
 import pandas as pd
+import sklearn
 
 import mlflow
+import mlflow.sklearn
 from mlflow import log_params, log_metric, log_artifacts
 
 from sentence_transformers import SentenceTransformer
@@ -46,21 +49,34 @@ def main():
         random_state=RANDOM_STATE
     ).reset_index(drop=True)
 
-    with mlflow.start_run(run_name="sbert_kmeans_training"):
+    with mlflow.start_run(run_name=f"sbert_kmeans_k{K}"):
+
+        start_time = time.time()
+
+        # =========================
+        # PARAMÈTRES
+        # =========================
         log_params({
             "k": K,
             "sample_size": len(df_sample),
             "random_state": RANDOM_STATE,
             "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
-            "algo": "KMeans"
+            "algo": "KMeans",
+            "sklearn_version": sklearn.__version__
         })
 
+        # =========================
+        # EMBEDDINGS
+        # =========================
         embedder = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
         embeddings = embedder.encode(
             df_sample["text_sbert"].tolist(),
             show_progress_bar=False
         )
 
+        # =========================
+        # CLUSTERING
+        # =========================
         kmeans = KMeans(
             n_clusters=K,
             random_state=RANDOM_STATE,
@@ -68,15 +84,28 @@ def main():
         )
         _ = kmeans.fit_predict(embeddings)
 
+        # =========================
+        # MÉTRIQUES
+        # =========================
         sil = silhouette_score(embeddings, kmeans.labels_)
-        log_metric("silhouette", float(sil))
+        training_time = time.time() - start_time
 
+        log_metric("silhouette_score", float(sil))
+        log_metric("training_time_seconds", float(training_time))
+
+        # =========================
+        # EXPORT LOCAL
+        # =========================
         joblib.dump(kmeans, os.path.join(MODEL_DIR, "kmeans_topics.pkl"))
         joblib.dump(
             {i: f"Theme_{i}" for i in range(K)},
             os.path.join(MODEL_DIR, "cluster_labels.pkl")
         )
 
+        # =========================
+        # ARTEFACTS MLFLOW
+        # =========================
+        mlflow.sklearn.log_model(kmeans, artifact_path="model")
         log_artifacts(MODEL_DIR, artifact_path="exported_models")
 
     print({

@@ -1,6 +1,7 @@
-FROM python:3.12-slim
+FROM python:3.12-slim AS base
 
 WORKDIR /app
+ENV PYTHONPATH=/app
 
 RUN apt-get update && apt-get install -y --no-install-recommends curl \
  && rm -rf /var/lib/apt/lists/*
@@ -11,4 +12,15 @@ RUN pip install --no-cache-dir -r requirements_inference.txt
 
 COPY . .
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+# ---------------------------
+# Production image
+# ---------------------------
+FROM base AS prod
+CMD ["uvicorn", "services.api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+
+# ---------------------------
+# Test image
+# ---------------------------
+FROM base AS test
+RUN pip install --no-cache-dir pytest==8.2.2
+CMD ["pytest"]

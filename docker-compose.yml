@@ -17,6 +17,19 @@ services:
       - ./data:/data
       - ./mlruns:/mlruns
 
+  api-tests:
+    build:
+        context: ./services/api
+        target: test
+    container_name: trustpilot_api_tests
+    depends_on:
+      - mlflow
+    volumes:
+      - ./models:/models
+      - ./data:/data
+      - ./mlruns:/mlruns
+
+
   mlflow:
     image: ghcr.io/mlflow/mlflow:v2.15.1
     container_name: trustpilot_mlflow
