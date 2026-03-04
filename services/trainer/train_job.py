@@ -8,7 +8,7 @@ import sklearn
 
 import mlflow
 import mlflow.sklearn
-from mlflow import log_params, log_metric, log_artifacts
+from mlflow import log_params, log_metric
 
 from sentence_transformers import SentenceTransformer
 from sklearn.cluster import KMeans
@@ -24,8 +24,15 @@ DEFAULT_K = int(os.getenv("K", "6"))
 DEFAULT_SAMPLE_SIZE = int(os.getenv("SAMPLE_SIZE", "20000"))
 DEFAULT_RANDOM_STATE = int(os.getenv("RANDOM_STATE", "42"))
 
-EMBEDDING_MODEL_NAME = os.getenv("EMBEDDING_MODEL", "sentence-transformers/all-MiniLM-L6-v2")
-REGISTERED_MODEL_NAME = os.getenv("REGISTERED_MODEL_NAME", "TrustpilotTopicModel")
+EMBEDDING_MODEL_NAME = os.getenv(
+    "EMBEDDING_MODEL",
+    "sentence-transformers/all-MiniLM-L6-v2"
+)
+
+REGISTERED_MODEL_NAME = os.getenv(
+    "REGISTERED_MODEL_NAME",
+    "TrustpilotTopicModel"
+)
 
 
 def clean_for_sbert(text: str) -> str:
@@ -37,13 +44,14 @@ def clean_for_sbert(text: str) -> str:
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--k", type=int, default=None, help="Nombre de clusters KMeans")
-    parser.add_argument("--sample-size", type=int, default=None, help="Taille de l'échantillon")
-    parser.add_argument("--random-state", type=int, default=None, help="Random state")
+    parser.add_argument("--k", type=int, default=None)
+    parser.add_argument("--sample-size", type=int, default=None)
+    parser.add_argument("--random-state", type=int, default=None)
     return parser.parse_args()
 
 
 def main():
+
     args = parse_args()
 
     k = args.k if args.k is not None else DEFAULT_K
@@ -56,7 +64,11 @@ def main():
     mlflow.set_experiment(EXPERIMENT_NAME)
 
     df = pd.read_csv(DATA_PATH, header=None, names=["label", "title", "text"])
-    df["text"] = (df["title"].fillna("") + " " + df["text"].fillna("")).astype(str)
+
+    df["text"] = (
+        df["title"].fillna("") + " " + df["text"].fillna("")
+    ).astype(str)
+
     df["text_sbert"] = df["text"].apply(clean_for_sbert)
 
     if len(df) == 0:
@@ -68,6 +80,7 @@ def main():
     ).reset_index(drop=True)
 
     with mlflow.start_run(run_name=f"sbert_kmeans_k{k}"):
+
         start_time = time.time()
 
         log_params({
@@ -80,6 +93,7 @@ def main():
         })
 
         embedder = SentenceTransformer(EMBEDDING_MODEL_NAME)
+
         embeddings = embedder.encode(
             df_sample["text_sbert"].tolist(),
             show_progress_bar=False
@@ -90,17 +104,32 @@ def main():
             random_state=random_state,
             n_init="auto"
         )
+
         _ = kmeans.fit_predict(embeddings)
 
         sil = silhouette_score(embeddings, kmeans.labels_)
+
         training_time = time.time() - start_time
 
         log_metric("silhouette_score", float(sil))
         log_metric("training_time_seconds", float(training_time))
 
-        joblib.dump(kmeans, os.path.join(MODEL_DIR, "kmeans_topics.pkl"))
+        cluster_labels = {
+            0: "Product performance & value perception",
+            1: "Entertainment and leisure products",
+            2: "Movies, documentaries and audiovisual content",
+            3: "Music albums & CDs",
+            4: "Books & literature",
+            5: "Technology & accessories"
+        }
+
         joblib.dump(
-            {i: f"Theme_{i}" for i in range(k)},
+            kmeans,
+            os.path.join(MODEL_DIR, "kmeans_topics.pkl")
+        )
+
+        joblib.dump(
+            cluster_labels,
             os.path.join(MODEL_DIR, "cluster_labels.pkl")
         )
 
@@ -109,8 +138,6 @@ def main():
             artifact_path="model",
             registered_model_name=REGISTERED_MODEL_NAME
         )
-
-        log_artifacts(MODEL_DIR, artifact_path="exported_models")
 
     print({
         "status": "success",
