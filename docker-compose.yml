@@ -25,6 +25,8 @@ services:
     container_name: trustpilot_api_tests
     depends_on:
       - mlflow
+    environment:
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
     volumes:
       - ./models:/models
       - ./data:/data
