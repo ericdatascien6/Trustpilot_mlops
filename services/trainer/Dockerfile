@@ -15,5 +15,7 @@ RUN pip install --no-cache-dir --upgrade pip \
     && pip install --no-cache-dir -r /app/requirements_trainer.txt
 
 COPY train_job.py /app/train_job.py
+COPY scripts/ /app/scripts/
+
 
 CMD ["python", "/app/train_job.py"]

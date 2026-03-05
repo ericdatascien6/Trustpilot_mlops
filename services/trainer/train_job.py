@@ -9,6 +9,7 @@ import sklearn
 import mlflow
 import mlflow.sklearn
 from mlflow import log_params, log_metric
+from mlflow.tracking import MlflowClient
 
 from sentence_transformers import SentenceTransformer
 from sklearn.cluster import KMeans
@@ -48,6 +49,37 @@ def parse_args():
     parser.add_argument("--sample-size", type=int, default=None)
     parser.add_argument("--random-state", type=int, default=None)
     return parser.parse_args()
+
+def auto_promote_if_better(registered_model_name: str, new_run_id: str, metric_name: str = "silhouette"):
+    client = MlflowClient()
+
+    new_metric = client.get_run(new_run_id).data.metrics.get(metric_name)
+    if new_metric is None:
+        print(f"[PROMOTION] metric '{metric_name}' not found on new run -> no promotion")
+        return
+
+    try:
+        prod_mv = client.get_model_version_by_alias(registered_model_name, "Production")
+        prod_run_id = prod_mv.run_id
+        prod_metric = client.get_run(prod_run_id).data.metrics.get(metric_name)
+    except Exception:
+        prod_mv = None
+        prod_metric = None
+
+    if (prod_mv is None) or (prod_metric is None):
+        latest = client.get_latest_versions(registered_model_name)
+        new_version = max(int(v.version) for v in latest)
+        client.set_registered_model_alias(registered_model_name, "Production", str(new_version))
+        print(f"[PROMOTION] No valid Production metric -> set Production to v{new_version} (silhouette={new_metric})")
+        return
+
+    if new_metric > prod_metric:
+        latest = client.get_latest_versions(registered_model_name)
+        new_version = max(int(v.version) for v in latest)
+        client.set_registered_model_alias(registered_model_name, "Production", str(new_version))
+        print(f"[PROMOTION] PROMOTED -> Production: v{prod_mv.version} -> v{new_version} ({prod_metric} -> {new_metric})")
+    else:
+        print(f"[PROMOTION] No promotion (Production silhouette={prod_metric} >= new silhouette={new_metric})")
 
 
 def main():
@@ -138,6 +170,13 @@ def main():
             artifact_path="model",
             registered_model_name=REGISTERED_MODEL_NAME
         )
+
+        auto_promote_if_better(
+            registered_model_name=REGISTERED_MODEL_NAME,
+            new_run_id=mlflow.active_run().info.run_id,
+            metric_name="silhouette_score"
+        )
+
 
     print({
         "status": "success",
