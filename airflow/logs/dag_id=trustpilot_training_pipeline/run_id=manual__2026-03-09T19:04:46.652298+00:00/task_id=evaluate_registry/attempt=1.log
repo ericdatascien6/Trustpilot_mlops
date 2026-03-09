@@ -1,0 +1,30 @@
+[2026-03-09T19:06:57.216+0000] {taskinstance.py:1979} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: trustpilot_training_pipeline.evaluate_registry manual__2026-03-09T19:04:46.652298+00:00 [queued]>
+[2026-03-09T19:06:57.225+0000] {taskinstance.py:1979} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: trustpilot_training_pipeline.evaluate_registry manual__2026-03-09T19:04:46.652298+00:00 [queued]>
+[2026-03-09T19:06:57.225+0000] {taskinstance.py:2193} INFO - Starting attempt 1 of 2
+[2026-03-09T19:06:57.249+0000] {taskinstance.py:2217} INFO - Executing <Task(BashOperator): evaluate_registry> on 2026-03-09 19:04:46.652298+00:00
+[2026-03-09T19:06:57.256+0000] {standard_task_runner.py:60} INFO - Started process 81 to run task
+[2026-03-09T19:06:57.261+0000] {standard_task_runner.py:87} INFO - Running: ['airflow', 'tasks', 'run', 'trustpilot_training_pipeline', 'evaluate_registry', 'manual__2026-03-09T19:04:46.652298+00:00', '--job-id', '34', '--raw', '--subdir', 'DAGS_FOLDER/trustpilot_training_pipeline.py', '--cfg-path', '/tmp/tmp8w5dbely']
+[2026-03-09T19:06:57.263+0000] {standard_task_runner.py:88} INFO - Job 34: Subtask evaluate_registry
+[2026-03-09T19:06:57.315+0000] {task_command.py:423} INFO - Running <TaskInstance: trustpilot_training_pipeline.evaluate_registry manual__2026-03-09T19:04:46.652298+00:00 [running]> on host 9172c2c67144
+[2026-03-09T19:06:57.412+0000] {taskinstance.py:2513} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='mlops' AIRFLOW_CTX_DAG_ID='trustpilot_training_pipeline' AIRFLOW_CTX_TASK_ID='evaluate_registry' AIRFLOW_CTX_EXECUTION_DATE='2026-03-09T19:04:46.652298+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2026-03-09T19:04:46.652298+00:00'
+[2026-03-09T19:06:57.414+0000] {subprocess.py:63} INFO - Tmp dir root location: /tmp
+[2026-03-09T19:06:57.414+0000] {subprocess.py:75} INFO - Running command: ['/usr/bin/bash', '-c', 'docker run --rm --network trustpilot_mlops_default trustpilot_mlops_trainer python /app/scripts/evaluate_registry.py']
+[2026-03-09T19:06:57.432+0000] {subprocess.py:86} INFO - Output:
+[2026-03-09T19:07:09.704+0000] {subprocess.py:93} INFO - === MLflow Registry Evaluation ===
+[2026-03-09T19:07:09.705+0000] {subprocess.py:93} INFO - model : TrustpilotTopicModel
+[2026-03-09T19:07:09.705+0000] {subprocess.py:93} INFO - alias : Production
+[2026-03-09T19:07:09.705+0000] {subprocess.py:93} INFO - --- Production ---
+[2026-03-09T19:07:09.706+0000] {subprocess.py:93} INFO - version : 1
+[2026-03-09T19:07:09.706+0000] {subprocess.py:93} INFO - run_id  : 347ac6991b0f428b8a97521cf319e126
+[2026-03-09T19:07:09.706+0000] {subprocess.py:93} INFO - metric  : 0.04689408838748932
+[2026-03-09T19:07:09.706+0000] {subprocess.py:93} INFO - --- Production ---
+[2026-03-09T19:07:09.707+0000] {subprocess.py:93} INFO - No Production model found
+[2026-03-09T19:07:09.707+0000] {subprocess.py:93} INFO - error : No such file or directory: '/mlruns/1/347ac6991b0f428b8a97521cf319e126/artifacts/model/.'
+[2026-03-09T19:07:09.707+0000] {subprocess.py:93} INFO - cluster_labels not found : [Errno 2] No such file or directory: '/models/cluster_labels.pkl'
+[2026-03-09T19:07:09.707+0000] {subprocess.py:93} INFO - SBERT model loaded
+[2026-03-09T19:07:09.708+0000] {subprocess.py:93} INFO - --- Decision (theoretical) ---
+[2026-03-09T19:07:09.708+0000] {subprocess.py:93} INFO - should_promote: False
+[2026-03-09T19:07:11.267+0000] {subprocess.py:97} INFO - Command exited with return code 0
+[2026-03-09T19:07:11.298+0000] {taskinstance.py:1149} INFO - Marking task as SUCCESS. dag_id=trustpilot_training_pipeline, task_id=evaluate_registry, execution_date=20260309T190446, start_date=20260309T190657, end_date=20260309T190711
+[2026-03-09T19:07:11.335+0000] {local_task_job_runner.py:234} INFO - Task exited with return code 0
+[2026-03-09T19:07:11.349+0000] {taskinstance.py:3312} INFO - 0 downstream tasks scheduled from follow-on schedule check

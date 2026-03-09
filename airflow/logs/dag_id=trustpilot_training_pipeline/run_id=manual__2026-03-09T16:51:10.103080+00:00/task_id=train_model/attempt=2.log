@@ -1,0 +1,132 @@
+[2026-03-09T16:57:32.616+0000] {taskinstance.py:1979} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: trustpilot_training_pipeline.train_model manual__2026-03-09T16:51:10.103080+00:00 [queued]>
+[2026-03-09T16:57:32.624+0000] {taskinstance.py:1979} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: trustpilot_training_pipeline.train_model manual__2026-03-09T16:51:10.103080+00:00 [queued]>
+[2026-03-09T16:57:32.625+0000] {taskinstance.py:2193} INFO - Starting attempt 2 of 2
+[2026-03-09T16:57:32.646+0000] {taskinstance.py:2217} INFO - Executing <Task(BashOperator): train_model> on 2026-03-09 16:51:10.103080+00:00
+[2026-03-09T16:57:32.652+0000] {standard_task_runner.py:60} INFO - Started process 163 to run task
+[2026-03-09T16:57:32.656+0000] {standard_task_runner.py:87} INFO - Running: ['airflow', 'tasks', 'run', 'trustpilot_training_pipeline', 'train_model', 'manual__2026-03-09T16:51:10.103080+00:00', '--job-id', '11', '--raw', '--subdir', 'DAGS_FOLDER/trustpilot_training_pipeline.py', '--cfg-path', '/tmp/tmpin00tt18']
+[2026-03-09T16:57:32.658+0000] {standard_task_runner.py:88} INFO - Job 11: Subtask train_model
+[2026-03-09T16:57:32.713+0000] {task_command.py:423} INFO - Running <TaskInstance: trustpilot_training_pipeline.train_model manual__2026-03-09T16:51:10.103080+00:00 [running]> on host 9172c2c67144
+[2026-03-09T16:57:32.797+0000] {taskinstance.py:2513} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='mlops' AIRFLOW_CTX_DAG_ID='trustpilot_training_pipeline' AIRFLOW_CTX_TASK_ID='train_model' AIRFLOW_CTX_EXECUTION_DATE='2026-03-09T16:51:10.103080+00:00' AIRFLOW_CTX_TRY_NUMBER='2' AIRFLOW_CTX_DAG_RUN_ID='manual__2026-03-09T16:51:10.103080+00:00'
+[2026-03-09T16:57:32.798+0000] {subprocess.py:63} INFO - Tmp dir root location: /tmp
+[2026-03-09T16:57:32.799+0000] {subprocess.py:75} INFO - Running command: ['/usr/bin/bash', '-c', 'docker run --rm --network trustpilot_mlops_default trustpilot_mlops_trainer python train_job.py --k 6']
+[2026-03-09T16:57:32.815+0000] {subprocess.py:86} INFO - Output:
+[2026-03-09T16:58:43.188+0000] {subprocess.py:93} INFO - Traceback (most recent call last):
+[2026-03-09T16:58:43.189+0000] {subprocess.py:93} INFO -   File "/usr/local/lib/python3.11/site-packages/urllib3/connection.py", line 204, in _new_conn
+[2026-03-09T16:58:43.189+0000] {subprocess.py:93} INFO -     sock = connection.create_connection(
+[2026-03-09T16:58:43.189+0000] {subprocess.py:93} INFO -            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2026-03-09T16:58:43.190+0000] {subprocess.py:93} INFO -   File "/usr/local/lib/python3.11/site-packages/urllib3/util/connection.py", line 60, in create_connection
+[2026-03-09T16:58:43.190+0000] {subprocess.py:93} INFO -     for res in socket.getaddrinfo(host, port, family, socket.SOCK_STREAM):
+[2026-03-09T16:58:43.190+0000] {subprocess.py:93} INFO -                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2026-03-09T16:58:43.190+0000] {subprocess.py:93} INFO -   File "/usr/local/lib/python3.11/socket.py", line 974, in getaddrinfo
+[2026-03-09T16:58:43.190+0000] {subprocess.py:93} INFO -     for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+[2026-03-09T16:58:43.191+0000] {subprocess.py:93} INFO -                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2026-03-09T16:58:43.191+0000] {subprocess.py:93} INFO - socket.gaierror: [Errno -2] Name or service not known
+[2026-03-09T16:58:43.191+0000] {subprocess.py:93} INFO - 
+[2026-03-09T16:58:43.192+0000] {subprocess.py:93} INFO - The above exception was the direct cause of the following exception:
+[2026-03-09T16:58:43.192+0000] {subprocess.py:93} INFO - 
+[2026-03-09T16:58:43.192+0000] {subprocess.py:93} INFO - Traceback (most recent call last):
+[2026-03-09T16:58:43.192+0000] {subprocess.py:93} INFO -   File "/usr/local/lib/python3.11/site-packages/urllib3/connectionpool.py", line 787, in urlopen
+[2026-03-09T16:58:43.193+0000] {subprocess.py:93} INFO -     response = self._make_request(
+[2026-03-09T16:58:43.193+0000] {subprocess.py:93} INFO -                ^^^^^^^^^^^^^^^^^^^
+[2026-03-09T16:58:43.193+0000] {subprocess.py:93} INFO -   File "/usr/local/lib/python3.11/site-packages/urllib3/connectionpool.py", line 493, in _make_request
+[2026-03-09T16:58:43.193+0000] {subprocess.py:93} INFO -     conn.request(
+[2026-03-09T16:58:43.194+0000] {subprocess.py:93} INFO -   File "/usr/local/lib/python3.11/site-packages/urllib3/connection.py", line 500, in request
+[2026-03-09T16:58:43.194+0000] {subprocess.py:93} INFO -     self.endheaders()
+[2026-03-09T16:58:43.194+0000] {subprocess.py:93} INFO -   File "/usr/local/lib/python3.11/http/client.py", line 1318, in endheaders
+[2026-03-09T16:58:43.194+0000] {subprocess.py:93} INFO -     self._send_output(message_body, encode_chunked=encode_chunked)
+[2026-03-09T16:58:43.195+0000] {subprocess.py:93} INFO -   File "/usr/local/lib/python3.11/http/client.py", line 1078, in _send_output
+[2026-03-09T16:58:43.195+0000] {subprocess.py:93} INFO -     self.send(msg)
+[2026-03-09T16:58:43.195+0000] {subprocess.py:93} INFO -   File "/usr/local/lib/python3.11/http/client.py", line 1016, in send
+[2026-03-09T16:58:43.195+0000] {subprocess.py:93} INFO -     self.connect()
+[2026-03-09T16:58:43.196+0000] {subprocess.py:93} INFO -   File "/usr/local/lib/python3.11/site-packages/urllib3/connection.py", line 331, in connect
+[2026-03-09T16:58:43.196+0000] {subprocess.py:93} INFO -     self.sock = self._new_conn()
+[2026-03-09T16:58:43.196+0000] {subprocess.py:93} INFO -                 ^^^^^^^^^^^^^^^^
+[2026-03-09T16:58:43.196+0000] {subprocess.py:93} INFO -   File "/usr/local/lib/python3.11/site-packages/urllib3/connection.py", line 211, in _new_conn
+[2026-03-09T16:58:43.197+0000] {subprocess.py:93} INFO -     raise NameResolutionError(self.host, self, e) from e
+[2026-03-09T16:58:43.197+0000] {subprocess.py:93} INFO - urllib3.exceptions.NameResolutionError: HTTPConnection(host='mlflow', port=5000): Failed to resolve 'mlflow' ([Errno -2] Name or service not known)
+[2026-03-09T16:58:43.197+0000] {subprocess.py:93} INFO - 
+[2026-03-09T16:58:43.197+0000] {subprocess.py:93} INFO - The above exception was the direct cause of the following exception:
+[2026-03-09T16:58:43.198+0000] {subprocess.py:93} INFO - 
+[2026-03-09T16:58:43.198+0000] {subprocess.py:93} INFO - Traceback (most recent call last):
+[2026-03-09T16:58:43.198+0000] {subprocess.py:93} INFO -   File "/usr/local/lib/python3.11/site-packages/requests/adapters.py", line 644, in send
+[2026-03-09T16:58:43.198+0000] {subprocess.py:93} INFO -     resp = conn.urlopen(
+[2026-03-09T16:58:43.198+0000] {subprocess.py:93} INFO -            ^^^^^^^^^^^^^
+[2026-03-09T16:58:43.199+0000] {subprocess.py:93} INFO -   File "/usr/local/lib/python3.11/site-packages/urllib3/connectionpool.py", line 871, in urlopen
+[2026-03-09T16:58:43.199+0000] {subprocess.py:93} INFO -     return self.urlopen(
+[2026-03-09T16:58:43.200+0000] {subprocess.py:93} INFO -            ^^^^^^^^^^^^^
+[2026-03-09T16:58:43.201+0000] {subprocess.py:93} INFO -   File "/usr/local/lib/python3.11/site-packages/urllib3/connectionpool.py", line 871, in urlopen
+[2026-03-09T16:58:43.201+0000] {subprocess.py:93} INFO -     return self.urlopen(
+[2026-03-09T16:58:43.201+0000] {subprocess.py:93} INFO -            ^^^^^^^^^^^^^
+[2026-03-09T16:58:43.201+0000] {subprocess.py:93} INFO -   File "/usr/local/lib/python3.11/site-packages/urllib3/connectionpool.py", line 871, in urlopen
+[2026-03-09T16:58:43.201+0000] {subprocess.py:93} INFO -     return self.urlopen(
+[2026-03-09T16:58:43.201+0000] {subprocess.py:93} INFO -            ^^^^^^^^^^^^^
+[2026-03-09T16:58:43.202+0000] {subprocess.py:93} INFO -   [Previous line repeated 2 more times]
+[2026-03-09T16:58:43.202+0000] {subprocess.py:93} INFO -   File "/usr/local/lib/python3.11/site-packages/urllib3/connectionpool.py", line 841, in urlopen
+[2026-03-09T16:58:43.202+0000] {subprocess.py:93} INFO -     retries = retries.increment(
+[2026-03-09T16:58:43.202+0000] {subprocess.py:93} INFO -               ^^^^^^^^^^^^^^^^^^
+[2026-03-09T16:58:43.202+0000] {subprocess.py:93} INFO -   File "/usr/local/lib/python3.11/site-packages/urllib3/util/retry.py", line 535, in increment
+[2026-03-09T16:58:43.202+0000] {subprocess.py:93} INFO -     raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+[2026-03-09T16:58:43.203+0000] {subprocess.py:93} INFO -     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2026-03-09T16:58:43.203+0000] {subprocess.py:93} INFO - urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='mlflow', port=5000): Max retries exceeded with url: /api/2.0/mlflow/experiments/get-by-name?experiment_name=trustpilot-topic-modeling (Caused by NameResolutionError("HTTPConnection(host='mlflow', port=5000): Failed to resolve 'mlflow' ([Errno -2] Name or service not known)"))
+[2026-03-09T16:58:43.203+0000] {subprocess.py:93} INFO - 
+[2026-03-09T16:58:43.203+0000] {subprocess.py:93} INFO - During handling of the above exception, another exception occurred:
+[2026-03-09T16:58:43.204+0000] {subprocess.py:93} INFO - 
+[2026-03-09T16:58:43.204+0000] {subprocess.py:93} INFO - Traceback (most recent call last):
+[2026-03-09T16:58:43.204+0000] {subprocess.py:93} INFO -   File "/usr/local/lib/python3.11/site-packages/mlflow/utils/rest_utils.py", line 187, in http_request
+[2026-03-09T16:58:43.204+0000] {subprocess.py:93} INFO -     return _get_http_response_with_retries(
+[2026-03-09T16:58:43.204+0000] {subprocess.py:93} INFO -            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2026-03-09T16:58:43.204+0000] {subprocess.py:93} INFO -   File "/usr/local/lib/python3.11/site-packages/mlflow/utils/request_utils.py", line 237, in _get_http_response_with_retries
+[2026-03-09T16:58:43.205+0000] {subprocess.py:93} INFO -     return session.request(method, url, allow_redirects=allow_redirects, **kwargs)
+[2026-03-09T16:58:43.205+0000] {subprocess.py:93} INFO -            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2026-03-09T16:58:43.205+0000] {subprocess.py:93} INFO -   File "/usr/local/lib/python3.11/site-packages/requests/sessions.py", line 589, in request
+[2026-03-09T16:58:43.206+0000] {subprocess.py:93} INFO -     resp = self.send(prep, **send_kwargs)
+[2026-03-09T16:58:43.206+0000] {subprocess.py:93} INFO -            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2026-03-09T16:58:43.207+0000] {subprocess.py:93} INFO -   File "/usr/local/lib/python3.11/site-packages/requests/sessions.py", line 703, in send
+[2026-03-09T16:58:43.208+0000] {subprocess.py:93} INFO -     r = adapter.send(request, **kwargs)
+[2026-03-09T16:58:43.208+0000] {subprocess.py:93} INFO -         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2026-03-09T16:58:43.208+0000] {subprocess.py:93} INFO -   File "/usr/local/lib/python3.11/site-packages/requests/adapters.py", line 677, in send
+[2026-03-09T16:58:43.209+0000] {subprocess.py:93} INFO -     raise ConnectionError(e, request=request)
+[2026-03-09T16:58:43.209+0000] {subprocess.py:93} INFO - requests.exceptions.ConnectionError: HTTPConnectionPool(host='mlflow', port=5000): Max retries exceeded with url: /api/2.0/mlflow/experiments/get-by-name?experiment_name=trustpilot-topic-modeling (Caused by NameResolutionError("HTTPConnection(host='mlflow', port=5000): Failed to resolve 'mlflow' ([Errno -2] Name or service not known)"))
+[2026-03-09T16:58:43.209+0000] {subprocess.py:93} INFO - 
+[2026-03-09T16:58:43.209+0000] {subprocess.py:93} INFO - During handling of the above exception, another exception occurred:
+[2026-03-09T16:58:43.209+0000] {subprocess.py:93} INFO - 
+[2026-03-09T16:58:43.209+0000] {subprocess.py:93} INFO - Traceback (most recent call last):
+[2026-03-09T16:58:43.210+0000] {subprocess.py:93} INFO -   File "/app/train_job.py", line 190, in <module>
+[2026-03-09T16:58:43.210+0000] {subprocess.py:93} INFO -     main()
+[2026-03-09T16:58:43.210+0000] {subprocess.py:93} INFO -   File "/app/train_job.py", line 96, in main
+[2026-03-09T16:58:43.210+0000] {subprocess.py:93} INFO -     mlflow.set_experiment(EXPERIMENT_NAME)
+[2026-03-09T16:58:43.210+0000] {subprocess.py:93} INFO -   File "/usr/local/lib/python3.11/site-packages/mlflow/tracking/fluent.py", line 143, in set_experiment
+[2026-03-09T16:58:43.211+0000] {subprocess.py:93} INFO -     experiment = client.get_experiment_by_name(experiment_name)
+[2026-03-09T16:58:43.211+0000] {subprocess.py:93} INFO -                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2026-03-09T16:58:43.211+0000] {subprocess.py:93} INFO -   File "/usr/local/lib/python3.11/site-packages/mlflow/tracking/client.py", line 1240, in get_experiment_by_name
+[2026-03-09T16:58:43.211+0000] {subprocess.py:93} INFO -     return self._tracking_client.get_experiment_by_name(name)
+[2026-03-09T16:58:43.211+0000] {subprocess.py:93} INFO -            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2026-03-09T16:58:43.212+0000] {subprocess.py:93} INFO -   File "/usr/local/lib/python3.11/site-packages/mlflow/tracking/_tracking_service/client.py", line 484, in get_experiment_by_name
+[2026-03-09T16:58:43.212+0000] {subprocess.py:93} INFO -     return self.store.get_experiment_by_name(name)
+[2026-03-09T16:58:43.212+0000] {subprocess.py:93} INFO -            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2026-03-09T16:58:43.212+0000] {subprocess.py:93} INFO -   File "/usr/local/lib/python3.11/site-packages/mlflow/store/tracking/rest_store.py", line 518, in get_experiment_by_name
+[2026-03-09T16:58:43.212+0000] {subprocess.py:93} INFO -     response_proto = self._call_endpoint(GetExperimentByName, req_body)
+[2026-03-09T16:58:43.212+0000] {subprocess.py:93} INFO -                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2026-03-09T16:58:43.213+0000] {subprocess.py:93} INFO -   File "/usr/local/lib/python3.11/site-packages/mlflow/store/tracking/rest_store.py", line 81, in _call_endpoint
+[2026-03-09T16:58:43.213+0000] {subprocess.py:93} INFO -     return call_endpoint(self.get_host_creds(), endpoint, method, json_body, response_proto)
+[2026-03-09T16:58:43.213+0000] {subprocess.py:93} INFO -            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2026-03-09T16:58:43.213+0000] {subprocess.py:93} INFO -   File "/usr/local/lib/python3.11/site-packages/mlflow/utils/rest_utils.py", line 357, in call_endpoint
+[2026-03-09T16:58:43.213+0000] {subprocess.py:93} INFO -     response = http_request(**call_kwargs)
+[2026-03-09T16:58:43.213+0000] {subprocess.py:93} INFO -                ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2026-03-09T16:58:43.214+0000] {subprocess.py:93} INFO -   File "/usr/local/lib/python3.11/site-packages/mlflow/utils/rest_utils.py", line 210, in http_request
+[2026-03-09T16:58:43.214+0000] {subprocess.py:93} INFO -     raise MlflowException(f"API request to {url} failed with exception {e}")
+[2026-03-09T16:58:43.214+0000] {subprocess.py:93} INFO - mlflow.exceptions.MlflowException: API request to http://mlflow:5000/api/2.0/mlflow/experiments/get-by-name failed with exception HTTPConnectionPool(host='mlflow', port=5000): Max retries exceeded with url: /api/2.0/mlflow/experiments/get-by-name?experiment_name=trustpilot-topic-modeling (Caused by NameResolutionError("HTTPConnection(host='mlflow', port=5000): Failed to resolve 'mlflow' ([Errno -2] Name or service not known)"))
+[2026-03-09T16:58:44.679+0000] {subprocess.py:97} INFO - Command exited with return code 1
+[2026-03-09T16:58:44.692+0000] {taskinstance.py:2731} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.8/site-packages/airflow/models/taskinstance.py", line 444, in _execute_task
+    result = _execute_callable(context=context, **execute_callable_kwargs)
+  File "/home/airflow/.local/lib/python3.8/site-packages/airflow/models/taskinstance.py", line 414, in _execute_callable
+    return execute_callable(context=context, **execute_callable_kwargs)
+  File "/home/airflow/.local/lib/python3.8/site-packages/airflow/operators/bash.py", line 212, in execute
+    raise AirflowException(
+airflow.exceptions.AirflowException: Bash command failed. The command returned a non-zero exit code 1.
+[2026-03-09T16:58:44.696+0000] {taskinstance.py:1149} INFO - Marking task as FAILED. dag_id=trustpilot_training_pipeline, task_id=train_model, execution_date=20260309T165110, start_date=20260309T165732, end_date=20260309T165844
+[2026-03-09T16:58:44.716+0000] {standard_task_runner.py:107} ERROR - Failed to execute job 11 for task train_model (Bash command failed. The command returned a non-zero exit code 1.; 163)
+[2026-03-09T16:58:44.729+0000] {local_task_job_runner.py:234} INFO - Task exited with return code 1
+[2026-03-09T16:58:44.754+0000] {taskinstance.py:3312} INFO - 0 downstream tasks scheduled from follow-on schedule check

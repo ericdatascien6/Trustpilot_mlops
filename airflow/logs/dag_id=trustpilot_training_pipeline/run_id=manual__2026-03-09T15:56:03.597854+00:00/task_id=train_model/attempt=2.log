@@ -1,0 +1,27 @@
+[2026-03-09T16:01:13.596+0000] {taskinstance.py:1979} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: trustpilot_training_pipeline.train_model manual__2026-03-09T15:56:03.597854+00:00 [queued]>
+[2026-03-09T16:01:13.605+0000] {taskinstance.py:1979} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: trustpilot_training_pipeline.train_model manual__2026-03-09T15:56:03.597854+00:00 [queued]>
+[2026-03-09T16:01:13.606+0000] {taskinstance.py:2193} INFO - Starting attempt 2 of 2
+[2026-03-09T16:01:13.630+0000] {taskinstance.py:2217} INFO - Executing <Task(BashOperator): train_model> on 2026-03-09 15:56:03.597854+00:00
+[2026-03-09T16:01:13.636+0000] {standard_task_runner.py:60} INFO - Started process 54 to run task
+[2026-03-09T16:01:13.640+0000] {standard_task_runner.py:87} INFO - Running: ['airflow', 'tasks', 'run', 'trustpilot_training_pipeline', 'train_model', 'manual__2026-03-09T15:56:03.597854+00:00', '--job-id', '4', '--raw', '--subdir', 'DAGS_FOLDER/trustpilot_training_pipeline.py', '--cfg-path', '/tmp/tmpyl0hz8t_']
+[2026-03-09T16:01:13.642+0000] {standard_task_runner.py:88} INFO - Job 4: Subtask train_model
+[2026-03-09T16:01:13.704+0000] {task_command.py:423} INFO - Running <TaskInstance: trustpilot_training_pipeline.train_model manual__2026-03-09T15:56:03.597854+00:00 [running]> on host 16de167c754e
+[2026-03-09T16:01:13.793+0000] {taskinstance.py:2513} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='mlops' AIRFLOW_CTX_DAG_ID='trustpilot_training_pipeline' AIRFLOW_CTX_TASK_ID='train_model' AIRFLOW_CTX_EXECUTION_DATE='2026-03-09T15:56:03.597854+00:00' AIRFLOW_CTX_TRY_NUMBER='2' AIRFLOW_CTX_DAG_RUN_ID='manual__2026-03-09T15:56:03.597854+00:00'
+[2026-03-09T16:01:13.794+0000] {subprocess.py:63} INFO - Tmp dir root location: /tmp
+[2026-03-09T16:01:13.795+0000] {subprocess.py:75} INFO - Running command: ['/usr/bin/bash', '-c', 'docker-compose run --rm trainer python train_job.py --k 6']
+[2026-03-09T16:01:13.811+0000] {subprocess.py:86} INFO - Output:
+[2026-03-09T16:01:13.814+0000] {subprocess.py:93} INFO - /usr/bin/bash: line 1: docker-compose: command not found
+[2026-03-09T16:01:13.814+0000] {subprocess.py:97} INFO - Command exited with return code 127
+[2026-03-09T16:01:13.826+0000] {taskinstance.py:2731} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.8/site-packages/airflow/models/taskinstance.py", line 444, in _execute_task
+    result = _execute_callable(context=context, **execute_callable_kwargs)
+  File "/home/airflow/.local/lib/python3.8/site-packages/airflow/models/taskinstance.py", line 414, in _execute_callable
+    return execute_callable(context=context, **execute_callable_kwargs)
+  File "/home/airflow/.local/lib/python3.8/site-packages/airflow/operators/bash.py", line 212, in execute
+    raise AirflowException(
+airflow.exceptions.AirflowException: Bash command failed. The command returned a non-zero exit code 127.
+[2026-03-09T16:01:13.830+0000] {taskinstance.py:1149} INFO - Marking task as FAILED. dag_id=trustpilot_training_pipeline, task_id=train_model, execution_date=20260309T155603, start_date=20260309T160113, end_date=20260309T160113
+[2026-03-09T16:01:13.851+0000] {standard_task_runner.py:107} ERROR - Failed to execute job 4 for task train_model (Bash command failed. The command returned a non-zero exit code 127.; 54)
+[2026-03-09T16:01:13.894+0000] {local_task_job_runner.py:234} INFO - Task exited with return code 1
+[2026-03-09T16:01:13.923+0000] {taskinstance.py:3312} INFO - 0 downstream tasks scheduled from follow-on schedule check
