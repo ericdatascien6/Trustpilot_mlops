@@ -91,6 +91,7 @@ services:
 
   airflow-webserver:
     image: apache/airflow:2.8.3
+    user: "0:0"
     container_name: airflow_webserver
     depends_on:
       - airflow-init
@@ -108,6 +109,7 @@ services:
 
   airflow-scheduler:
     image: apache/airflow:2.8.3
+    user: "0:0"
     container_name: airflow_scheduler
     depends_on:
       - airflow-webserver
