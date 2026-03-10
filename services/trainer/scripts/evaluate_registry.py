@@ -1,66 +1,52 @@
 import os
-import joblib
-import numpy as np
-import re
 import mlflow
-import mlflow.sklearn
-from sentence_transformers import SentenceTransformer
-from pathlib import Path
 from mlflow.tracking import MlflowClient
 
-# connexion au serveur MLflow
+dag_run_id = os.getenv("AIRFLOW_CTX_DAG_RUN_ID")
+
 mlflow.set_tracking_uri("http://mlflow:5000")
 
-MODELS_DIR = Path(os.getenv("MODEL_DIR", "/models"))
-MODEL_NAME = "TrustpilotTopicModel"
-MODEL_ALIAS = "Production"
-
-print("=== MLflow Registry Evaluation ===")
-print("model :", MODEL_NAME)
-print("alias :", MODEL_ALIAS)
+EXPERIMENT_NAME = os.getenv("MLFLOW_EXPERIMENT_NAME", "trustpilot-topic-modeling")
 
 client = MlflowClient()
 
-# récupération du modèle en Production
-try:
-    prod_version = client.get_model_version_by_alias(MODEL_NAME, MODEL_ALIAS)
+experiment = client.get_experiment_by_name(EXPERIMENT_NAME)
 
-    print("--- Production ---")
-    print("version :", prod_version.version)
-    print("run_id  :", prod_version.run_id)
+if experiment is None:
+    raise ValueError("Experiment not found")
 
-    run = client.get_run(prod_version.run_id)
+runs = client.search_runs(
+    experiment_ids=[experiment.experiment_id],
+    filter_string=f"tags.airflow_run = '{dag_run_id}'",
+    order_by=["metrics.silhouette_score DESC"],
+    max_results=50
+)
 
-    metric = run.data.metrics.get("silhouette_score")
-    print("metric  :", metric)
+if len(runs) == 0:
+    raise ValueError("No runs found")
 
-    # chargement du modèle Production
-    model = mlflow.sklearn.load_model(
-        model_uri=f"models:/{MODEL_NAME}@{MODEL_ALIAS}"
-    )
+best_run = runs[0]
 
-    print("model loaded successfully")
+best_run_id = best_run.info.run_id
+best_silhouette = best_run.data.metrics.get("silhouette_score")
+best_k = best_run.data.params.get("k")
 
-except Exception as e:
+print("=== BEST MODEL ===")
+print("run_id :", best_run_id)
+print("k :", best_k)
+print("silhouette :", best_silhouette)
 
-    print("--- Production ---")
-    print("No Production model found")
-    print("error :", str(e))
-    model = None
+model_uri = f"runs:/{best_run_id}/model"
+print("model_uri :", model_uri)
 
-# chargement des labels des clusters
-try:
-    cluster_labels = joblib.load(MODELS_DIR / "cluster_labels.pkl")
-    print("cluster_labels loaded")
-except Exception as e:
-    print("cluster_labels not found :", str(e))
 
-# chargement du modèle SBERT
-try:
-    sbert_model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
-    print("SBERT model loaded")
-except Exception as e:
-    print("SBERT loading error :", str(e))
+MODEL_NAME = "TrustpilotTopicModel"
 
-print("--- Decision (theoretical) ---")
-print("should_promote: False")
+print("registering model to registry...")
+
+result = mlflow.register_model(
+    model_uri=model_uri,
+    name=MODEL_NAME
+)
+
+print("registered version :", result.version)

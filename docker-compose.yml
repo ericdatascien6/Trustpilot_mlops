@@ -42,10 +42,11 @@ services:
       mlflow server
       --host 0.0.0.0
       --port 5000
-      --backend-store-uri sqlite:///mlflow.db
+      --backend-store-uri sqlite:////mlruns/mlflow.db
       --default-artifact-root /mlruns
     volumes:
       - ./mlruns:/mlruns
+      - ./mlflow.db:/mlflow.db
 
   trainer:
     build:
@@ -56,7 +57,7 @@ services:
       - mlflow
     environment:
       - MLFLOW_TRACKING_URI=http://mlflow:5000
-      - MLFLOW_EXPERIMENT_NAME=trustpilot_topic_modeling
+      - MLFLOW_EXPERIMENT_NAME=trustpilot-topic-modeling
       - DATA_PATH=/data/raw/train.csv
       - MODELS_DIR=/models
       - EMBEDDING_MODEL=sentence-transformers/all-MiniLM-L6-v2
