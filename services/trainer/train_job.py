@@ -113,6 +113,7 @@ def main():
 
     with mlflow.start_run(run_name=f"sbert_kmeans_k{k}"):
 
+        mlflow.set_tag("airflow_run", os.getenv("AIRFLOW_CTX_DAG_RUN_ID"))
         start_time = time.time()
 
         log_params({
@@ -167,15 +168,15 @@ def main():
 
         mlflow.sklearn.log_model(
             sk_model=kmeans,
-            artifact_path="model",
-            registered_model_name=REGISTERED_MODEL_NAME
+            artifact_path="model"#,
+#            registered_model_name=REGISTERED_MODEL_NAME
         )
 
-        auto_promote_if_better(
-            registered_model_name=REGISTERED_MODEL_NAME,
-            new_run_id=mlflow.active_run().info.run_id,
-            metric_name="silhouette_score"
-        )
+#        auto_promote_if_better(
+#            registered_model_name=REGISTERED_MODEL_NAME,
+#            new_run_id=mlflow.active_run().info.run_id,
+#            metric_name="silhouette_score"
+#        )
 
 
     print({

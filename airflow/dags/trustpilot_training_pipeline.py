@@ -15,14 +15,36 @@ with DAG(
     default_args=default_args
 ) as dag:
 
-    train_model = BashOperator(
-        task_id="train_model",
-        bash_command="docker run --rm --network trustpilot_mlops_default -v /home/ubuntu/Trustpilot_mlops/data:/data trustpilot_mlops_trainer python train_job.py --k 6"
-    )
+    k_values = [3, 4, 5, 6, 7, 8]
+
+    train_tasks = []
+
+    for k in k_values:
+
+        task = BashOperator(
+            task_id=f"train_k{k}",
+            bash_command=f"""
+            docker run --rm \
+            --network trustpilot_mlops_default \
+            -v /home/ubuntu/Trustpilot_mlops/data:/data \
+            trustpilot_mlops_trainer \
+            python train_job.py --k {k}
+            """
+        )
+
+        train_tasks.append(task)
+
 
     evaluate_model = BashOperator(
         task_id="evaluate_registry",
         bash_command="docker run --rm --network trustpilot_mlops_default trustpilot_mlops_trainer python /app/scripts/evaluate_registry.py"
     )
 
-    train_model >> evaluate_model
+    promote_model = BashOperator(
+        task_id="promote_model_if_better",
+        bash_command="docker run --rm --network trustpilot_mlops_default trustpilot_mlops_trainer python /app/scripts/promote_model_if_better.py"
+    )
+
+
+
+    train_tasks >> evaluate_model >> promote_model
