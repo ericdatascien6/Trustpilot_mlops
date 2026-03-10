@@ -212,4 +212,8 @@ L’évolution future du pipeline inclura :
 
 * recherche d’hyperparamètres (plusieurs valeurs de k)
 * promotion automatique du meilleur modèle
+<<<<<<< HEAD
 * monitoring et détection de drift.
+=======
+* monitoring et détection de drift.
+>>>>>>> b737f8428ba187cfe9f3b96c1a9e01ba6b1e276b
