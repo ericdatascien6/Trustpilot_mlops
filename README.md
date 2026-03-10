@@ -1,6 +1,6 @@
 # Trustpilot MLOps – Topic Modeling Pipeline
 
-Ce projet implémente une pipeline MLOps complète pour l’analyse d’avis Trustpilot et l’extraction automatique de topics.
+Ce projet implémente une pipeline **MLOps complète** pour l’analyse d’avis Trustpilot et l’extraction automatique de topics.
 
 Le système repose sur :
 
@@ -11,17 +11,19 @@ Le système repose sur :
 * FastAPI pour exposer le modèle via une API d’inférence
 * Docker / Docker Compose pour l’isolation et la reproductibilité
 
-L’objectif est de construire une architecture MLOps modulaire, permettant :
+L’objectif est de construire une architecture MLOps modulaire permettant :
 
 * l’entraînement automatisé
 * la sélection du meilleur modèle
 * la gestion des versions
+* la promotion automatique du modèle en production
 * l’inférence via API
 
-## Architecture du projet
+---
 
-**Pipeline de machine learning :**
+# Architecture du projet
 
+## Pipeline de Machine Learning
 reviews text
       ↓
 Sentence-BERT embeddings
@@ -30,7 +32,7 @@ KMeans clustering
       ↓
 silhouette_score evaluation
 
-**Pipeline MLOps :**
+## Pipeline MLOps
 
 Airflow DAG
      ↓
@@ -42,9 +44,14 @@ evaluate_registry
      ↓
 Model Registry (alias Production)
      ↓
+promote_model_if_better
+     ↓
+Model Registry (alias Production)
+     ↓
 FastAPI inference
 
-**Arborescence du projet**
+
+#Arborescence du projet**
 
 Trustpilot_mlops
 │
@@ -73,143 +80,178 @@ Trustpilot_mlops
 │       ├── Dockerfile
 │       └── scripts
 │           └── evaluate_registry.py
+│           └── promote_model_if_better.py
 │
 ├── docker-compose.yml
 ├── clean_project.sh
 └── README.md
 
-1. Cloner le dépôt
+
+---
+
+# Installation
+
+## 1. Cloner le dépôt
+
+```bash
 git clone https://github.com/ericdatascien6/Trustpilot_mlops.git
 
 cd Trustpilot_mlops
 
-2. Démarrer la stack MLOps
 
-Le projet utilise Docker Compose pour démarrer :
+# Démarrer la stack MLOps
+
+Le projet utilise Docker Compose pour démarrer les services suivants :
 
 * MLflow
 * Airflow
-* API FastAPI
-* Trainer container
+* API
+* FastAPI
+* Trainer
 
-Lancer la stack :
+**Démarrer tous les services :**
+
+./start.sh
+
+ou
 
 docker-compose up -d
 
-Services disponibles :
+# Services disponibles
 
-Service	Port
-Airflow UI	8081
-MLflow UI	5000
-API FastAPI	8000
+| Service     | Port |
+| ----------- | ---- |
+| Airflow UI  | 8081 |
+| MLflow UI   | 5000 |
+| FastAPI API | 8000 |
 
-3. Interface MLflow
+
+# Interface MLflow
 
 MLflow permet de :
 
 * suivre les runs d’entraînement
 * comparer les métriques
-* gérer les versions du modèle
+* gérer les versions du modèle 
+* promouvoir un modèle en production
 
-Accéder à MLflow :
+**Accéder à MLflow :**
 
-http://IP_VM:5000
+http://IP_VM:5000 
 
-Chaque run log :
+Chaque run enregistre notamment :
 
-* k
+* k (nombre de clusters)
 * silhouette_score
 * training_time
 
-Les modèles sont enregistrés dans :
+Les modèles sont enregistrés dans MLflow Model Registry
 
-MLflow Model Registry
 
-4. Orchestration avec Airflow
+# Orchestration avec Airflow
 
 Airflow orchestre le pipeline d’entraînement.
 
-DAG principal :
+**DAG principal :**
 
 trustpilot_training_pipeline
 
-Pipeline :
+Pipeline exécuté :
 
-train_model
-      ↓
-evaluate_registry
+* train_job
+        ↓
+* evaluate_registry
+        ↓ 
+* promote_model_if_better
 
-Accéder à l’interface Airflow :
+
+**Accéder à l’interface Airflow :**
 
 http://IP_VM:8081
 
-Depuis l’UI Airflow il est possible de :
+Depuis l’interface Airflow il est possible de  :
 
 * déclencher un entraînement
 * consulter les logs
 * suivre l’état des tâches
 
-5. API d’inférence
+# API d’inférence
 
-L’API FastAPI expose le modèle via HTTP.
+L’API FastAPI expose le modèle via HTTP. Le modèle chargé est :
 
-Le modèle chargé est :
+* MLflow Model Registry
+* alias : Production
 
-MLflow Model Registry
+Cela permet d’utiliser automatiquement la meilleure version du modèle.
 
-alias : Production
 
-Ce qui permet d’utiliser automatiquement la meilleure version du modèle.
+# Accéder à l’API
 
-* Lancer l’API manuellement
-* cd services/api
-* python -m venv .venv
-* source .venv/bin/activate
-* pip install -r requirements_inference.txt
-* uvicorn main:app --host 127.0.0.1 --port 8000
+**Health check :**
 
-## Accéder à l’API
+curl http://127.0.0.1:8000/health
 
-http://127.0.0.1:8000
+**Tester l’inférence :**
 
-Interface Swagger :
+./inference.sh ou directement :
 
-http://127.0.0.1:8000/docs
+curl -X POST 
+http://localhost:8000/predict \
+-H "Content-Type: application/json" \
+-H "x-api-key: secret123" \
+-d '{"text":"This product is amazing"
 
-Tester l’API depuis une machine locale (Tunnel SSH)
+
+# Accès à l’API depuis une machine locale (Tunnel SSH)
 
 Si l’API tourne sur une VM distante :
 
-ssh -i "data_enginering_machine.pem" -L 9000:127.0.0.1:8000 ubuntu@IP_VM
+ssh -i "data_enginering_machine.pem" -L 9000:127.0.0.1:8000 ubuntu@IP_VM 
 
 Puis ouvrir :
 
 http://localhost:9000/docs
 
-## Nettoyer le projet
+
+# Réinitialiser MLflow
 
 Pour repartir d’un environnement propre :
 
-./clean_project.sh
+./reset_mlflow.sh
 
 Ce script :
 
 * arrête les containers
-* supprime les logs Airflow
 * supprime les runs MLflow
-* nettoie les caches Python
+* supprime les artifacts
+* redémarre la stack
 
-## Objectif du projet
 
-Ce projet illustre une architecture MLOps simplifiée mais réaliste intégrant :
+# Arrêter la stack
+
+ ./stop.sh
+
+ou
+
+docker-compose down
+
+
+# Objectif du projet
+
+Ce projet illustre une architecture MLOps simplifiée mais réaliste intégrant : 
 
 * entraînement automatisé
-* gestion de modèles
-* orchestration
-* service d’inférence
+* gestion de modèles avec MLflow
+* orchestration avec Airflow
+* promotion automatique du modèl
+* service d’inférence via API
 
-L’évolution future du pipeline inclura :
+# Évolutions possibles
 
-* recherche d’hyperparamètres (plusieurs valeurs de k)
-* promotion automatique du meilleur modèle
-* monitoring et détection de drift.
+Les évolutions futures du pipeline incluront : 
+
+* recherche d’hyperparamètres avancée
+* monitoring des performances
+* détection de drift
+* dashboards d’observabilité (Prometheus / Grafana)
+* CI/CD pour le déploiement des modèles
