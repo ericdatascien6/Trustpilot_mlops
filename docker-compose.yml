@@ -94,6 +94,7 @@ services:
     image: apache/airflow:2.8.3
     user: "0:0"
     container_name: airflow_webserver
+    restart: always
     depends_on:
       - airflow-init
     ports:
@@ -112,6 +113,7 @@ services:
     image: apache/airflow:2.8.3
     user: "0:0"
     container_name: airflow_scheduler
+    restart: always
     depends_on:
       - airflow-webserver
     environment:
