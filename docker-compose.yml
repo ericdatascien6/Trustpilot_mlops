@@ -51,6 +51,7 @@ services:
     build:
       context: ./services/trainer
     container_name: trustpilot_trainer
+    command: tail -f /dev/null
     depends_on:
       - mlflow
     environment:

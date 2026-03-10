@@ -18,4 +18,4 @@ COPY train_job.py /app/train_job.py
 COPY scripts/ /app/scripts/
 
 
-CMD ["python", "/app/train_job.py"]
+#CMD ["python", "/app/train_job.py"]
