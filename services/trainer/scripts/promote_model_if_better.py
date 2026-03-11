@@ -41,7 +41,7 @@ else:
     print("current_production_version : None")
     print("current_production_metric : None")
 
-if prod is None or prod_metric is None or candidate_metric > prod_metric:
+if prod is None or prod_metric is None or candidate_metric >= prod_metric:
     client.set_registered_model_alias(MODEL_NAME, "Production", candidate.version)
     print(f"PROMOTED version {candidate.version} to alias Production")
 else:
