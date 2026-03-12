@@ -104,8 +104,12 @@ services:
       AIRFLOW__CORE__EXECUTOR: SequentialExecutor
       AIRFLOW__CORE__LOAD_EXAMPLES: "False"
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: sqlite:////opt/airflow/airflow.db
+      AIRFLOW__WEBSERVER__SECRET_KEY: "8fd73ba1f818a0c67504ffd7f432e87a"
     volumes:
-      - ./airflow:/opt/airflow
+      - ./airflow/dags:/opt/airflow/dags
+      - ./services:/opt/airflow/services
+      - ./data:/opt/airflow/data
+      - ./airflow/airflow.db:/opt/airflow/airflow.db
       - /var/run/docker.sock:/var/run/docker.sock
     command: webserver
 
@@ -120,8 +124,12 @@ services:
     environment:
       AIRFLOW__CORE__EXECUTOR: SequentialExecutor
       AIRFLOW__CORE__LOAD_EXAMPLES: "False"
+      AIRFLOW__WEBSERVER__SECRET_KEY: "8fd73ba1f818a0c67504ffd7f432e87a"
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: sqlite:////opt/airflow/airflow.db
     volumes:
-      - ./airflow:/opt/airflow
+      - ./airflow/dags:/opt/airflow/dags
+      - ./services:/opt/airflow/services
+      - ./data:/opt/airflow/data
+      - ./airflow/airflow.db:/opt/airflow/airflow.db
       - /var/run/docker.sock:/var/run/docker.sock
     command: scheduler

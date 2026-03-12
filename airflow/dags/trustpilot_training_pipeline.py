@@ -49,6 +49,7 @@ with DAG(
         bash_command="""
         docker run --rm \
         --network trustpilot_mlops_default \
+        -e MLFLOW_TRACKING_URI=http://mlflow:5000 \
         -v /home/ubuntu/Trustpilot_mlops/mlruns:/mlruns \
         trustpilot_mlops_trainer \
         python /app/scripts/promote_model_if_better.py
@@ -56,4 +57,22 @@ with DAG(
     )
 
 
-    train_tasks >> evaluate_model >> promote_model
+    simulate_stream = BashOperator(
+        task_id="simulate_review_stream",
+        bash_command="""
+        cd /opt/airflow && \
+        python3 services/trainer/scripts/simulate_review_stream.py
+        """
+    )
+
+
+    update_dataset = BashOperator(
+        task_id="update_training_dataset",
+        bash_command="""
+        cd /opt/airflow && \
+        python3 services/trainer/scripts/update_training_dataset.py
+        """
+    )
+
+
+    simulate_stream >> update_dataset >> train_tasks >> evaluate_model >> promote_model
