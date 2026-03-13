@@ -1,8 +1,7 @@
 .venv/
-data/
 .zen/
 
-# Environment variables (contains API keys)
+# Environment variables
 .env
 
 # Python
@@ -19,8 +18,10 @@ __pycache__/
 models/
 mlruns/
 
-# Raw data
-data/raw/
+# Data
+data/dataset_source/amazon_reviews.csv
+data/archive/*
+!data/archive/.gitkeep
 
 # Mac
 .DS_Store

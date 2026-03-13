@@ -1,6 +1,31 @@
 from airflow import DAG
 from airflow.operators.bash import BashOperator
+from airflow.operators.python import ShortCircuitOperator
 from datetime import datetime
+import json
+import os
+
+
+STATUS_FILE = "/opt/airflow/data/sas/ingestion_status.json"
+
+
+def check_ingestion_status():
+    if not os.path.exists(STATUS_FILE):
+        raise FileNotFoundError(f"Status file not found: {STATUS_FILE}")
+
+    with open(STATUS_FILE, "r", encoding="utf-8") as f:
+        status = json.load(f)
+
+    threshold_reached = status.get("threshold_reached", False)
+    sas_review_count = status.get("sas_review_count", 0)
+    threshold = status.get("threshold", 0)
+
+    print(
+        f"[check_ingestion_status] threshold_reached={threshold_reached}, "
+        f"sas_review_count={sas_review_count}, threshold={threshold}"
+    )
+
+    return threshold_reached
 
 
 with DAG(
@@ -13,6 +38,31 @@ with DAG(
     k_values = [3, 4, 5, 6, 7, 8]
 
     train_tasks = []
+
+
+    simulate_stream = BashOperator(
+        task_id="simulate_review_stream",
+        bash_command="""
+        cd /opt/airflow && \
+        python3 services/trainer/scripts/simulate_review_stream.py
+        """
+    )
+
+
+    update_dataset = BashOperator(
+        task_id="update_training_dataset",
+        bash_command="""
+        cd /opt/airflow && \
+        python3 services/trainer/scripts/update_training_dataset.py
+        """
+    )
+
+
+    check_threshold = ShortCircuitOperator(
+        task_id="check_threshold",
+        python_callable=check_ingestion_status,
+    )
+
 
     for k in k_values:
 
@@ -57,22 +107,5 @@ with DAG(
     )
 
 
-    simulate_stream = BashOperator(
-        task_id="simulate_review_stream",
-        bash_command="""
-        cd /opt/airflow && \
-        python3 services/trainer/scripts/simulate_review_stream.py
-        """
-    )
-
-
-    update_dataset = BashOperator(
-        task_id="update_training_dataset",
-        bash_command="""
-        cd /opt/airflow && \
-        python3 services/trainer/scripts/update_training_dataset.py
-        """
-    )
-
-
-    simulate_stream >> update_dataset >> train_tasks >> evaluate_model >> promote_model
+    simulate_stream >> update_dataset >> check_threshold >> train_tasks
+    train_tasks >> evaluate_model >> promote_model
