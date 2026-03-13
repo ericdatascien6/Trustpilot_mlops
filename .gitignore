@@ -1,3 +1,4 @@
+# Virtual environments
 .venv/
 .zen/
 
@@ -14,20 +15,41 @@ __pycache__/
 .vscode/
 *.swp
 
-# ML artifacts
-models/
-mlruns/
-
-# Data
-data/dataset_source/amazon_reviews.csv
-data/archive/*
-!data/archive/.gitkeep
-
 # Mac
 .DS_Store
 
-# Airflow
+# ========================
+# ML artifacts
+# ========================
+
+models/
+mlruns/
+
+# ========================
+# Data
+# ========================
+
+# Runtime generated files
+data/sas/ingestion_status.json
+
+# Allow required CSV structure
+!data/raw/train.csv
+!data/archive/integrated_reviews.csv
+!data/sas/trustpilot_new_reviews.csv
+
+# ========================
+# Airflow runtime
+# ========================
+
 airflow/logs/
 airflow/airflow.db
 airflow/airflow-webserver.pid
 airflow/airflow.cfg
+
+# ========================
+# Misc
+# ========================
+
+logs/
+*.log
+*.tmp
