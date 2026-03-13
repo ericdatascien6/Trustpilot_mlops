@@ -1,21 +1,36 @@
+# ========================
 # Virtual environments
+# ========================
+
 .venv/
 .zen/
 
+# ========================
 # Environment variables
+# ========================
+
 .env
 
+# ========================
 # Python
+# ========================
+
 __pycache__/
 *.pyc
 *.pyo
 
+# ========================
 # IDE
+# ========================
+
 .idea/
 .vscode/
 *.swp
 
+# ========================
 # Mac
+# ========================
+
 .DS_Store
 
 # ========================
@@ -32,7 +47,10 @@ mlruns/
 # Runtime generated files
 data/sas/ingestion_status.json
 
-# Allow required CSV structure
+# Large dataset (optional if you later add full dataset)
+# data/dataset_source/amazon_reviews_full.csv
+
+# Required CSV structure for pipeline (must stay in repo)
 !data/raw/train.csv
 !data/archive/integrated_reviews.csv
 !data/sas/trustpilot_new_reviews.csv
