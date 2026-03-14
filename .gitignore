@@ -1,20 +1,17 @@
 # ========================
 # Virtual environments
 # ========================
-
 .venv/
 .zen/
 
 # ========================
 # Environment variables
 # ========================
-
 .env
 
 # ========================
 # Python
 # ========================
-
 __pycache__/
 *.pyc
 *.pyo
@@ -22,7 +19,6 @@ __pycache__/
 # ========================
 # IDE
 # ========================
-
 .idea/
 .vscode/
 *.swp
@@ -30,13 +26,11 @@ __pycache__/
 # ========================
 # Mac
 # ========================
-
 .DS_Store
 
 # ========================
 # ML artifacts
 # ========================
-
 models/
 mlruns/
 
@@ -58,7 +52,6 @@ data/sas/ingestion_status.json
 # ========================
 # Airflow runtime
 # ========================
-
 airflow/logs/
 airflow/airflow.db
 airflow/airflow-webserver.pid
@@ -67,7 +60,6 @@ airflow/airflow.cfg
 # ========================
 # Misc
 # ========================
-
 logs/
 *.log
 *.tmp
