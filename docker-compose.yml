@@ -133,3 +133,13 @@ services:
       - ./airflow/airflow.db:/opt/airflow/airflow.db
       - /var/run/docker.sock:/var/run/docker.sock
     command: scheduler
+
+
+  streamlit:
+    build:
+      context: ./services/streamlit
+    container_name: trustpilot_streamlit
+    ports:
+      - "8501:8501" 
+    depends_on:
+      - api

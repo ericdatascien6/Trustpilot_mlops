@@ -57,6 +57,11 @@ airflow/airflow.db
 airflow/airflow-webserver.pid
 airflow/airflow.cfg
 
+# Airflow files sometimes created at project root
+airflow.cfg
+airflow.db
+
+
 # ========================
 # Misc
 # ========================
