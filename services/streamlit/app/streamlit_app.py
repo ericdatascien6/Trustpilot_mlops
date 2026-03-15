@@ -264,13 +264,13 @@ if page == pages[2]:
 
             st.info(review_text)
 
-            st.write(f"Sentiment réel (dataset) : **{true_label}**")
+            #st.write(f"Sentiment réel (dataset) : **{true_label}**")
 
             st.caption("Inference powered by FastAPI")
             st.code(f"{API_URL}/predict")
 
             st.write("Cluster :", result["cluster_id"])
-            st.write("Theme :", result["theme"])
+            #st.write("Theme :", result["theme"])
             st.write("Confidence :", round(result["confidence"], 3))
 
             with st.expander("API response (debug)"):
@@ -329,10 +329,10 @@ if page == pages[3]:
 
             with col_text:
 
-                st.markdown(
-                    f"<strong>Theme :</strong> {result['theme']}",
-                    unsafe_allow_html=True
-                )
+                #st.markdown(
+                #    f"<strong>Theme :</strong> {result['theme']}",
+                #    unsafe_allow_html=True
+                #)
 
                 st.write("Cluster :", result["cluster_id"])
                 st.write("Confidence :", round(result["confidence"],3))
