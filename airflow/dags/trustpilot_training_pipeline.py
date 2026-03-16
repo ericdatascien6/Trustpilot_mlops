@@ -31,9 +31,9 @@ def check_ingestion_status():
 with DAG(
     dag_id="trustpilot_training_pipeline",
     start_date=datetime(2024, 1, 1),
-#    schedule_interval=None,
     schedule_interval="*/1 * * * *",
     catchup=False,
+    max_active_runs=1,
 ) as dag:
 
     k_values = [3, 4, 5, 6, 7, 8]
