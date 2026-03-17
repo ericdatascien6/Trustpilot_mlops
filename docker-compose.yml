@@ -46,7 +46,7 @@ services:
       --default-artifact-root /mlruns
     volumes:
       - ./mlruns:/mlruns
-      - ./mlflow.db:/mlflow.db
+
 
   trainer:
     build:
